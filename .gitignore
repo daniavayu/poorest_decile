@@ -1,0 +1,45 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.Rproj.user
+
+# R session files
+.Rhistory
+.RData
+.RDataTmp
+
+# Project data (keep raw and intermediate data out of git)
+01-input/
+02-output/
+interpolation_excercise/
+work/
+
+# Keep only notebook artifacts under work/EDA tracked
+!work/
+work/*
+!work/EDA/
+work/EDA/*
+!work/EDA/*.ipynb
+
+# Large binary data formats
+*.dta
+*.fst
+*.feather
+*.parquet
+*.rds
+*.rda
+*.sav
+
+# Optional local caches and logs
+*.log
+*.tmp
+
+# Nested local clone (avoid accidental gitlink/submodule tracking)
+bindata_check/
