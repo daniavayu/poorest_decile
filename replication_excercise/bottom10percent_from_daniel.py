@@ -9,13 +9,6 @@ import pandas as pd
 
 
 REQUIRED_COLUMNS = {"year", "welf", "pop"}
-PREFERRED_INPUTS = [
-    "globdist.dta",
-    "globdist.csv",
-    "globdist.parquet",
-    "globdist.feather",
-]
-DEFAULT_FALLBACK_PATTERN = "GlobalDist*.dta"
 TARGET_DECILES = [1, 2, 5, 10]
 DECILE_LABELS = {
     1: "Poorest",
@@ -27,20 +20,20 @@ DECILE_COLORS = {
     1: "#2F42ED",
     2: "#D81B60",
     5: "#1EB910",
-    10:"#F4D10D",
+    10: "#F4D10D",
 }
 
 
 def parse_args() -> argparse.Namespace:
     script_dir = Path(__file__).resolve().parent
     parser = argparse.ArgumentParser(
-        description="Translate the Stata bottom-decile workflow to Python."
+        description="Run Nishant's bottom-decile workflow using Daniel's prepared data."
     )
     parser.add_argument(
         "--input",
         type=Path,
-        default=None,
-        help="Path to the input dataset. If omitted, the script looks for globdist first.",
+        default=script_dir / "prepared_daniel_input.csv",
+        help="Path to the prepared CSV generated from Daniel's source data.",
     )
     parser.add_argument(
         "--output-csv",
@@ -57,49 +50,18 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def resolve_input_file(explicit_path: Path | None, script_dir: Path) -> Path:
-    if explicit_path is not None:
-        return explicit_path.resolve()
-
-    for file_name in PREFERRED_INPUTS:
-        candidate = script_dir / file_name
-        if candidate.exists():
-            return candidate
-
-    matches = sorted(script_dir.glob("globdist*"))
-    for match in matches:
-        if match.is_file():
-            return match
-
-    fallback_matches = sorted(script_dir.glob(DEFAULT_FALLBACK_PATTERN))
-    for match in fallback_matches:
-        if match.is_file():
-            return match
-
-    raise FileNotFoundError(
-        "No input dataset found. Put globdist in the script folder or pass --input."
-    )
-
-
 def load_dataset(file_path: Path) -> pd.DataFrame:
-    suffix = file_path.suffix.lower()
-    if suffix == ".dta":
-        data = pd.read_stata(file_path)
-    elif suffix == ".csv":
-        data = pd.read_csv(file_path)
-    elif suffix == ".parquet":
-        data = pd.read_parquet(file_path)
-    elif suffix == ".feather":
-        data = pd.read_feather(file_path)
-    else:
-        raise ValueError(f"Unsupported input format: {file_path.suffix}")
-
+    data = pd.read_csv(file_path)
     missing = REQUIRED_COLUMNS.difference(data.columns)
     if missing:
         missing_list = ", ".join(sorted(missing))
         raise ValueError(f"Missing required columns: {missing_list}")
 
-    return data.loc[:, ["year", "welf", "pop"]].dropna().copy()
+    cleaned = data.loc[:, ["year", "welf", "pop"]].dropna().copy()
+    if cleaned.empty:
+        raise ValueError("The prepared input is empty after dropping missing values.")
+
+    return cleaned
 
 
 def assign_weighted_deciles(group: pd.DataFrame) -> pd.DataFrame:
@@ -113,10 +75,6 @@ def assign_weighted_deciles(group: pd.DataFrame) -> pd.DataFrame:
         lambda value: min(10, max(1, math.ceil(value * 10)))
     )
     return ordered
-
-
-def weighted_mean(values: pd.Series, weights: pd.Series) -> float:
-    return (values * weights).sum() / weights.sum()
 
 
 def build_decile_table(data: pd.DataFrame) -> pd.DataFrame:
@@ -183,9 +141,7 @@ def make_plot(summary: pd.DataFrame, output_path: Path) -> None:
 
 def main() -> None:
     args = parse_args()
-    script_dir = Path(__file__).resolve().parent
-    input_path = resolve_input_file(args.input, script_dir)
-    data = load_dataset(input_path)
+    data = load_dataset(args.input)
     summary = build_decile_table(data)
 
     args.output_csv.parent.mkdir(parents=True, exist_ok=True)
@@ -193,9 +149,9 @@ def main() -> None:
     summary.to_csv(args.output_csv, index=False)
     make_plot(summary, args.output_plot)
 
-    print(f"Input used: {input_path}")
-    print(f"CSV saved to: {args.output_csv}")
-    print(f"Plot saved to: {args.output_plot}")
+    print(f"Input used: {args.input.resolve()}")
+    print(f"CSV saved to: {args.output_csv.resolve()}")
+    print(f"Plot saved to: {args.output_plot.resolve()}")
 
 
 if __name__ == "__main__":

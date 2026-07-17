@@ -37,6 +37,10 @@ work/EDA/*
 *.rda
 *.sav
 
+# Large generated CSVs
+replication_excercise/prepared_daniel_input.csv
+code_nishant/GlobalDist1000bins_1990_2026_20260324_2021_01_02_PROD.csv
+
 # Optional local caches and logs
 *.log
 *.tmp
