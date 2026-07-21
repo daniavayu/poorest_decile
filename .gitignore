@@ -37,6 +37,7 @@ work/EDA/*
 *.rda
 *.sav
 *.csv
+code_daniel/*.csv
 
 
 # Large generated CSVs
