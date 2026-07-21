@@ -1,14 +1,6 @@
-cran_mirror <- "https://cloud.r-project.org"
-required_packages <- c("dplyr", "joyn", "ggplot2", "pipr", "scales")
-missing_packages <- required_packages[!vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)]
-
-if (length(missing_packages) > 0) {
-  options(repos = c(CRAN = cran_mirror))
-  install.packages(missing_packages, repos = cran_mirror)
-}
-
 load("comparable_blog 2.Rda")
 library(dplyr)
+install.packages("joyn")
 library(joyn)
 library(ggplot2)
 
@@ -46,11 +38,15 @@ decile_shares <- comparable_blog |>
     decile = factor(decile, levels = 1:10, labels = paste("Decile", 1:10))) |>
   ggplot(aes(x = year, y = welfare_share)) +
   geom_line(linewidth = 0.8) +
-  facet_wrap(~ decile, ncol = 5, scales = "free_y") +
-  labs(
-    title = "Welfare Share by Decile Over Time",
-    x = NULL,
-    y = "Welfare share (%)",
-    color = "Method" ) +
-  scale_y_continuous(labels = scales::label_number(accuracy = 0.1, suffix = "%")) +
-  theme_minimal())
+    facet_wrap(~ decile, ncol = 5, scales = "free_y") +
+    labs(
+      title = "Welfare Share by Decile Over Time",
+      x = NULL,
+      y = "Welfare share (%)",
+      color = "Method" ) +
+  scale_x_continuous(
+    limits = c(1981, 2026),
+    breaks = c(1980, 1990, 2000, 2010, 2020, 2026)
+    ) )
+print(decile_panel_plot)
+  
