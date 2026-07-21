@@ -36,6 +36,8 @@ work/EDA/*
 *.rds
 *.rda
 *.sav
+*.csv
+
 
 # Large generated CSVs
 replication_excercise/prepared_daniel_input.csv
