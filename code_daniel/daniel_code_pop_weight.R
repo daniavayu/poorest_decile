@@ -59,7 +59,7 @@ decile_shares <- comparable_blog |>
       x = NULL,
       y = "Income share (%)"
     ) +
-    scale_y_continuous(labels = scales::label_number(accuracy = 0.1, suffix = "%")) +
+    scale_y_continuous(labels = scales::label_number(accuracy = 0.01, suffix = "%")) +
     theme_minimal())
 
 print(decile_panel_plot_corrected)
