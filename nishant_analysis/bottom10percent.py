@@ -45,13 +45,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-csv",
         type=Path,
-        default=script_dir / "bottom10percent_output.csv",
+        default=script_dir / "nishant_decile_shares.csv",
         help="Path for the decile-level output table.",
     )
     parser.add_argument(
         "--output-plot",
         type=Path,
-        default=script_dir / "bottom10percent_plot.png",
+        default=script_dir / "nishant_decile_shares_plot.png",
         help="Path for the exported plot.",
     )
     return parser.parse_args()

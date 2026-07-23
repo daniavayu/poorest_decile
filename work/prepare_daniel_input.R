@@ -1,4 +1,4 @@
-source_rda <- file.path("..", "code_daniel", "comparable_blog 2.Rda")
+source_rda <- file.path("..", "daniel_analysis", "comparable_blog 2.Rda")
 output_csv <- file.path("prepared_daniel_input.csv")
 cran_mirror <- "https://cloud.r-project.org"
 

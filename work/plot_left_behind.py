@@ -7,7 +7,7 @@ import pandas as pd
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-INPUT_CSV = SCRIPT_DIR / "bottom10percent_output.csv"
+INPUT_CSV = SCRIPT_DIR / "daniel_decile_shares.csv"
 OUTPUT_PLOT = SCRIPT_DIR / "left_behind_plot.png"
 OUTPUT_GAP_PLOT = SCRIPT_DIR / "left_behind_gap_plot.png"
 FOCUS_DECILES = [1, 5, 10]

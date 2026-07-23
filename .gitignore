@@ -19,14 +19,6 @@ wheels/
 01-input/
 02-output/
 interpolation_excercise/
-work/
-
-# Keep only notebook artifacts under work/EDA tracked
-!work/
-work/*
-!work/EDA/
-work/EDA/*
-!work/EDA/*.ipynb
 
 # Large binary data formats
 *.dta
@@ -37,13 +29,13 @@ work/EDA/*
 *.rda
 *.sav
 *.csv
-code_daniel/*.csv
-code_daniel/comparable_blog_with_pop.csv
-code_daniel/prepared_daniel_input.csv
+daniel_analysis/*.csv
+daniel_analysis/comparable_blog_with_pop.csv
+daniel_analysis/prepared_daniel_input.csv
 
 # Large generated CSVs
-replication_excercise/prepared_daniel_input.csv
-code_nishant/GlobalDist1000bins_1990_2026_20260324_2021_01_02_PROD.csv
+work/prepared_daniel_input.csv
+nishant_analysis/GlobalDist1000bins_1990_2026_20260324_2021_01_02_PROD.csv
 
 # Optional local caches and logs
 *.log

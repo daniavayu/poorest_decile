@@ -19,7 +19,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 # 1000 cuantiles poblacionales (bins de igual masa de poblacion).
 # ====================================================
 
-INPUT_CSV = "C:\\Users\\wb661551\\OneDrive - WBG\\Desktop\\Internship\\poorest_decile\\replication_excercise\\prepared_daniel_input.csv"
+INPUT_CSV = SCRIPT_DIR / "prepared_daniel_input.csv"
 YEARS = [2000, 2015, 2026]
 N_QUANTILES = 1000
 POVERTY_LINE = 3.0  # linea de pobreza internacional (2021 PPP)
