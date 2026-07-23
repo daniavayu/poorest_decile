@@ -8,29 +8,26 @@ import matplotlib.pyplot as plt
 SCRIPT_DIR = Path(__file__).resolve().parent
 
 # =================== OBJETIVO =====================
-# Replicar el estilo de grafico "Daily income per capita" (Our World in Data)
-# usando la metodologia propuesta por el jefe (equivalente Stata):
+# Replicate Our World in Data graph using Nishant's logic. 
 #
 #   keep if inlist(year,2015,2026)
 #   egen qt = xtile(avg_welfare), weight(pop) by(year) n(1000)
 #   collapse avg_welfare [aw=pop], by(year qt)
-#
-# En vez de una densidad KDE, la curva se construye a partir de los propios
-# 1000 cuantiles poblacionales (bins de igual masa de poblacion).
+
 # ====================================================
 
 INPUT_CSV = SCRIPT_DIR / "prepared_daniel_input.csv"
 YEARS = [2000, 2015, 2026]
 N_QUANTILES = 1000
-POVERTY_LINE = 3.0  # linea de pobreza internacional (2021 PPP)
+POVERTY_LINE = 3.0  # poverty line (2021 PPP)
 
 df = pd.read_csv(INPUT_CSV)
 
 
 def assign_weighted_xtile(group: pd.DataFrame, n: int = N_QUANTILES) -> pd.DataFrame:
 	"""
-	Ordena por welf, acumula la poblacion y asigna cada fila al cuantil (1..n)
-	segun en que fraccion de la poblacion acumulada cae.
+	Order by welfare, accumulate population, and assign each row to a quantile (1..n) 
+	based on which fraction of the accumulated population it falls into.
 	"""
 	ordered = group.sort_values('welf').copy()
 	total_pop = ordered['pop'].sum()
@@ -41,7 +38,7 @@ def assign_weighted_xtile(group: pd.DataFrame, n: int = N_QUANTILES) -> pd.DataF
 
 def build_quantile_table(data: pd.DataFrame, years: list[int], n: int = N_QUANTILES) -> pd.DataFrame:
 	"""
-	Devuelve una fila por (year, qt) con el bienestar promedio ponderado.
+	Return one row per (year, qt) with the weighted average welfare.
 	"""
 	filtered = data[data['year'].isin(years)].copy()
 	with_qt = pd.concat(
@@ -60,11 +57,10 @@ def build_quantile_table(data: pd.DataFrame, years: list[int], n: int = N_QUANTI
 
 def density_from_quantiles(welf_sorted: np.ndarray, n: int = N_QUANTILES, smooth_window: int = 15) -> np.ndarray:
 	"""
-	Convierte los 1000 puntos de igual masa poblacional (1/n cada uno) en una
-	curva de densidad: como cada paso de cuantil representa siempre 1/n de la
-	poblacion, la densidad local es (1/n) dividido entre cuanto "espacio" de
-	ingreso (en log10) ocupa ese paso. Se suaviza con una media movil para
-	evitar el ruido propio de trabajar con puntos discretos.
+	Convert the 1000 equal-population points (1/n each) into a density curve: 
+	since each quantile step always represents 1/n of the population, the local density is (1/n) divided 
+	by how much "space" in income (in log10) that step occupies. It is smoothed with a moving average to
+	avoid noise from working with discrete points.
 	"""
 	log_welf = np.log10(welf_sorted)
 	local_width = np.gradient(log_welf)  # ancho en log10(welf) por cada 1/n de poblacion
